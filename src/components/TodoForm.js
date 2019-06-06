@@ -13,7 +13,7 @@ export class TodoForm extends Component {
   };
 
   clearInput = () => {
-    this.setState({title: '', date: moment().format('YYYY-MM-DD')});
+    this.setState({title: '', date: moment()});
   };
 
   submitFormHandler = (event) => {
@@ -38,7 +38,12 @@ export class TodoForm extends Component {
             onChange={this.inputChangeHandler}
             style={styles.input}
           />
-          <input type='date' name='date' value={date} onChange={this.inputChangeHandler} />
+          <input
+            type='date'
+            name='date'
+            value={date.format('YYYY-MM-DD')}
+            onChange={this.inputChangeHandler}
+          />
           <button type='button' onClick={this.submitFormHandler} style={styles.button}>
             Add
           </button>

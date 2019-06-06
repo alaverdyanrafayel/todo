@@ -41,6 +41,19 @@ class App extends Component {
     }));
   };
 
+  updateTodoDateHandler = (id, date) => {
+    this.setState(({todos}) => ({
+      todos: todos.map((todo) => {
+        if (todo.id === id)
+          return {
+            ...todo,
+            date,
+          };
+        else return todo;
+      }),
+    }));
+  };
+
   incrDateHandler = (id) => {
     this.setState(({todos}) => ({
       todos: todos.map((todo) => {
@@ -81,6 +94,8 @@ class App extends Component {
           return todo.completed;
         case 'uncompleted':
           return !todo.completed;
+        default:
+          throw new Error('Unknown filter');
       }
     });
     return (
@@ -94,8 +109,7 @@ class App extends Component {
         <TodoList
           todos={visibleTodos}
           toggleCompleteHandler={this.toggleCompleteHandler}
-          decrDateHandler={this.decrDateHandler}
-          incrDateHandler={this.incrDateHandler}
+          updateTodoDateHandler={this.updateTodoDateHandler}
         />
       </div>
     );
