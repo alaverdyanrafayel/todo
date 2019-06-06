@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import moment from "moment";
 import { TodoList, TodoForm, TodoFilter } from "./components";
 import "./index.css";
 
@@ -40,6 +41,36 @@ class App extends Component {
     }));
   };
 
+  incrDateHandler = id => {
+    this.setState(({ todos }) => ({
+      todos: todos.map(todo => {
+        if (todo.id === id)
+          return {
+            ...todo,
+            date: moment(todo.date)
+              .add(1, "days")
+              .format("YYYY-MM-DD")
+          };
+        else return todo;
+      })
+    }));
+  };
+
+  decrDateHandler = id => {
+    this.setState(({ todos }) => ({
+      todos: todos.map(todo => {
+        if (todo.id === id)
+          return {
+            ...todo,
+            date: moment(todo.date)
+              .subtract(1, "days")
+              .format("YYYY-MM-DD")
+          };
+        else return todo;
+      })
+    }));
+  };
+
   render() {
     const { todos, filter } = this.state;
     const visibleTodos = todos.filter(todo => {
@@ -63,6 +94,8 @@ class App extends Component {
         <TodoList
           todos={visibleTodos}
           toggleCompleteHandler={this.toggleCompleteHandler}
+          decrDateHandler={this.decrDateHandler}
+          incrDateHandler={this.incrDateHandler}
         />
       </div>
     );

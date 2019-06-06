@@ -1,28 +1,31 @@
 import React, { Component } from "react";
 import uuid from "uuid/v4";
+import moment from "moment";
 
 export class TodoForm extends Component {
   state = {
-    title: ""
+	title: "",
+	date: moment().format("YYYY-MM-DD")
   };
 
-  titleChangeHandler = ({ target: { value } }) => {
-    this.setState({ title: value });
+  inputChangeHandler = ({ target: { value, name } }) => {
+    this.setState({ [name]: value });
   };
+
 
   clearInput = () => {
-    this.setState({ title: "" });
+    this.setState({ title: "", date: moment().format("YYYY-MM-DD") });
   };
 
   submitFormHandler = event => {
     event.preventDefault();
     const id = uuid();
-    const { title } = this.state;
-    this.props.addTodoHandler({ id, title, completed: false }, this.clearInput);
+	const { title, date } = this.state;
+    this.props.addTodoHandler({ id, title, date, completed: false }, this.clearInput);
   };
 
   render() {
-    const { title } = this.state;
+    const { title, date } = this.state;
     return (
       <div style={styles.container}>
         <form onSubmit={this.submitFormHandler} autoComplete="off">
@@ -30,11 +33,13 @@ export class TodoForm extends Component {
             Add Todo
           </label>
           <input
-            id="new-task"
+			id="new-task"
+			name="title"
             value={title}
-            onChange={this.titleChangeHandler}
+            onChange={this.inputChangeHandler}
             style={styles.input}
           />
+		  <input type="date" name="date" value={date} onChange={this.inputChangeHandler} />
           <button
             type="button"
             onClick={this.submitFormHandler}

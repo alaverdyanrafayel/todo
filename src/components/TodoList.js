@@ -1,19 +1,29 @@
 import React from "react";
 
-export const TodoList = ({ todos, toggleCompleteHandler }) => {
+export const TodoList = ({
+  todos,
+  toggleCompleteHandler,
+  incrDateHandler,
+  decrDateHandler
+}) => {
   return (
     <div>
-      {todos.map(({ title, id, completed }) => {
+      {todos.map(({ title, id, completed, date }) => {
         return (
           <div
             style={completed ? styles.completedContainer : styles.container}
             key={id}
-            onClick={() => toggleCompleteHandler(id)}
           >
-            <input type="checkbox" checked={completed} />
+            <input
+              type="checkbox"
+              checked={completed}
+              onChange={() => toggleCompleteHandler(id)}
+            />
             <p style={completed ? styles.completedText : styles.text}>
-              {title}
+              {title} - {date}
             </p>
+            <button onClick={() => incrDateHandler(id)}>+</button>
+            <button onClick={() => decrDateHandler(id)}>-</button>
           </div>
         );
       })}
