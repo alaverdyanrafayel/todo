@@ -1,5 +1,16 @@
 import React from 'react';
 import moment from 'moment';
+import {Seq} from 'immutable';
+import {Todo} from '../types';
+
+type TodoListProps = {
+  todos: Seq.Indexed<Todo>;
+  toggleCompleteHandler: Function;
+  updateTodoDateHandler: Function;
+  sortBy: string;
+  sortOrder: string;
+  sortChangeHandler: Function;
+};
 
 export const TodoList = ({
   todos,
@@ -8,7 +19,7 @@ export const TodoList = ({
   sortBy,
   sortOrder,
   sortChangeHandler,
-}) => {
+}: TodoListProps) => {
   return (
     <table>
       <thead>

@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Map} from 'immutable';
+import {Map, Seq} from 'immutable';
 import moment from 'moment';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
+import {Todo} from './types';
 
 const filterButtons = [
   {
@@ -19,54 +20,66 @@ const filterButtons = [
   },
 ];
 
-class App extends Component {
+type AppState = {
+  todos: Map<string, Todo>;
+  filter: string;
+  searchText: string;
+  sortBy: string;
+  sortOrder: string;
+};
+
+type AppProps = {};
+
+class App extends Component<AppProps, AppState> {
   state = {
-    todos: Map({}),
+    todos: Map<string, Todo>(),
     filter: 'all',
     searchText: '',
     sortBy: 'date',
     sortOrder: 'desc',
   };
 
-  addTodoHandler = (data, cb) => {
+  addTodoHandler = (data: Todo, cb: Function): void => {
     this.setState(
-      ({todos}) => ({
+      ({todos}: {todos: Map<string, Todo>}) => ({
         todos: todos.set(data.id, data),
       }),
-      cb,
+      cb(),
     );
   };
 
-  changeSearchTextHandler = ({target: {value: searchText}}) => {
-    this.setState({searchText});
+  changeSearchTextHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({searchText: event.target.value});
   };
 
-  changeFilterHandler = (filter) => {
+  changeFilterHandler = (filter: string): void => {
     this.setState({filter});
   };
 
-  toggleCompleteHandler = (id) => {
-    this.setState(({todos}) => ({
+  toggleCompleteHandler = (id: string): void => {
+    this.setState(({todos}: {todos: Map<string, Todo>}) => ({
       todos: todos.updateIn([id, 'completed'], (completed) => !completed),
     }));
   };
 
-  updateTodoDateHandler = (id, date) => {
-    this.setState(({todos}) => ({
+  updateTodoDateHandler = (id: string, date: moment.Moment): void => {
+    this.setState(({todos}: {todos: Map<string, Todo>}) => ({
       todos: todos.setIn([id, 'date'], date),
     }));
   };
 
-  sortChangeHandler = (sortBy) => {
+  sortChangeHandler = (sortBy: string): void => {
     const {sortBy: prevSortBy} = this.state;
     if (prevSortBy === sortBy) {
-      this.setState(({sortOrder}) => ({sortOrder: sortOrder === 'asc' ? 'desc' : 'asc'}));
+      this.setState(({sortOrder}: {sortOrder: string}) => ({
+        sortOrder: sortOrder === 'asc' ? 'desc' : 'asc',
+      }));
     } else {
       this.setState({sortBy, sortOrder: 'desc'});
     }
   };
 
-  sortCompare(a, b, sortBy = 'date', sortOrder = 'desc') {
+  sortCompare(a: Todo, b: Todo, sortBy = 'date', sortOrder = 'desc'): number {
     switch (sortBy) {
       case 'date':
         return sortOrder === 'desc'
@@ -81,15 +94,15 @@ class App extends Component {
     }
   }
 
-  sort = (todos) => {
+  sort = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
     const {sortBy, sortOrder} = this.state;
     return todos.sort((a, b) => {
       return this.sortCompare(a, b, sortBy, sortOrder);
     });
   };
-  filter = (todos) => {
+  filter = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
     const {filter: filterValue, searchText} = this.state;
-    return todos.filter((todo) => {
+    return todos.filter((todo: Todo) => {
       switch (filterValue) {
         case 'all':
           return todo.title.includes(searchText);
@@ -133,8 +146,8 @@ class App extends Component {
 const styles = {
   appContainer: {
     padding: 30,
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'flex' as 'flex',
+    flexDirection: 'column' as 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },

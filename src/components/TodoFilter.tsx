@@ -1,12 +1,20 @@
 import React from 'react';
 
+type TodoFilterProps = {
+  changeFilterHandler: Function;
+  filterButtons: Array<{label: string; value: string}>;
+  filter: string;
+  searchText: string;
+  changeSearchTextHandler: Function;
+};
+
 export const TodoFilter = ({
   changeFilterHandler,
   filterButtons,
   filter,
   searchText,
   changeSearchTextHandler,
-}) => {
+}: TodoFilterProps) => {
   return (
     <div style={styles.container}>
       {filterButtons.map(({label, value}) => {
@@ -21,7 +29,7 @@ export const TodoFilter = ({
       <input
         type='text'
         value={searchText}
-        onChange={changeSearchTextHandler}
+        onChange={(ev) => changeSearchTextHandler(ev)}
         placeholder='Search...'
         style={styles.searchInput}
       />

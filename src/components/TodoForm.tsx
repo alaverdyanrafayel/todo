@@ -2,13 +2,22 @@ import React, {Component} from 'react';
 import uuid from 'uuid/v4';
 import moment from 'moment';
 
-export class TodoForm extends Component {
+type TodoFormState = {
+  title: string;
+  date: moment.Moment;
+};
+type TodoFormProps = {
+  addTodoHandler: Function;
+};
+
+export class TodoForm extends Component<TodoFormProps, TodoFormState> {
   state = {
     title: '',
     date: moment(),
   };
 
-  inputChangeHandler = ({target: {value, name}}) => {
+  inputChangeHandler = ({target: {value, name}}: {target: HTMLInputElement}): void => {
+    // @ts-ignore
     this.setState({[name]: value});
   };
 
@@ -16,7 +25,7 @@ export class TodoForm extends Component {
     this.setState({title: '', date: moment()});
   };
 
-  submitFormHandler = (event) => {
+  submitFormHandler = (event: React.FormEvent<EventTarget>): void => {
     event.preventDefault();
     const id = uuid();
     const {title, date} = this.state;
