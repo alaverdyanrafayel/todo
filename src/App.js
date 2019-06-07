@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import moment from 'moment';
+import {Map} from 'immutable';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 
@@ -20,12 +20,17 @@ const filterButtons = [
 
 class App extends Component {
   state = {
-    todos: [],
+    todos: Map({}),
     filter: 'all',
   };
 
   addTodoHandler = (data, cb) => {
-    this.setState(({todos}) => ({todos: [...todos, data]}), cb);
+    this.setState(
+      ({todos}) => ({
+        todos: todos.set(data.id, data),
+      }),
+      cb,
+    );
   };
 
   changeFilterHandler = (filter) => {
@@ -34,53 +39,13 @@ class App extends Component {
 
   toggleCompleteHandler = (id) => {
     this.setState(({todos}) => ({
-      todos: todos.map((todo) => {
-        if (todo.id === id) return {...todo, completed: !todo.completed};
-        else return todo;
-      }),
+      todos: todos.updateIn([id, 'completed'], (completed) => !completed),
     }));
   };
 
   updateTodoDateHandler = (id, date) => {
     this.setState(({todos}) => ({
-      todos: todos.map((todo) => {
-        if (todo.id === id)
-          return {
-            ...todo,
-            date,
-          };
-        else return todo;
-      }),
-    }));
-  };
-
-  incrDateHandler = (id) => {
-    this.setState(({todos}) => ({
-      todos: todos.map((todo) => {
-        if (todo.id === id)
-          return {
-            ...todo,
-            date: moment(todo.date)
-              .add(1, 'days')
-              .format('YYYY-MM-DD'),
-          };
-        else return todo;
-      }),
-    }));
-  };
-
-  decrDateHandler = (id) => {
-    this.setState(({todos}) => ({
-      todos: todos.map((todo) => {
-        if (todo.id === id)
-          return {
-            ...todo,
-            date: moment(todo.date)
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD'),
-          };
-        else return todo;
-      }),
+      todos: todos.setIn([id, 'date'], date),
     }));
   };
 
@@ -107,7 +72,7 @@ class App extends Component {
           changeFilterHandler={this.changeFilterHandler}
         />
         <TodoList
-          todos={visibleTodos}
+          todos={visibleTodos.valueSeq()}
           toggleCompleteHandler={this.toggleCompleteHandler}
           updateTodoDateHandler={this.updateTodoDateHandler}
         />
