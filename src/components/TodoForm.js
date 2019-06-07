@@ -41,7 +41,7 @@ export class TodoForm extends Component {
           <input
             type='date'
             name='date'
-            value={date.format('YYYY-MM-DD')}
+            value={moment(date).format('YYYY-MM-DD')}
             onChange={this.inputChangeHandler}
           />
           <button type='button' onClick={this.submitFormHandler} style={styles.button}>

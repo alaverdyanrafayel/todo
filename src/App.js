@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Map} from 'immutable';
+import moment from 'moment';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 
@@ -23,6 +24,8 @@ class App extends Component {
     todos: Map({}),
     filter: 'all',
     searchText: '',
+    sortBy: 'date',
+    sortOrder: 'desc',
   };
 
   addTodoHandler = (data, cb) => {
@@ -54,10 +57,40 @@ class App extends Component {
     }));
   };
 
-  render() {
-    const {todos, filter, searchText} = this.state;
-    const visibleTodos = todos.filter((todo) => {
-      switch (filter) {
+  sortChangeHandler = (sortBy) => {
+    const {sortBy: prevSortBy} = this.state;
+    if (prevSortBy === sortBy) {
+      this.setState(({sortOrder}) => ({sortOrder: sortOrder === 'asc' ? 'desc' : 'asc'}));
+    } else {
+      this.setState({sortBy, sortOrder: 'desc'});
+    }
+  };
+
+  sortCompare(a, b, sortBy = 'date', sortOrder = 'desc') {
+    switch (sortBy) {
+      case 'date':
+        return sortOrder === 'desc'
+          ? moment(a.date).diff(moment(b.date))
+          : moment(b.date).diff(moment(a.date));
+      case 'title':
+        return sortOrder === 'desc'
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title);
+      default:
+        throw new Error('Incorrect sortBy value');
+    }
+  }
+
+  sort = (todos) => {
+    const {sortBy, sortOrder} = this.state;
+    return todos.sort((a, b) => {
+      return this.sortCompare(a, b, sortBy, sortOrder);
+    });
+  };
+  filter = (todos) => {
+    const {filter: filterValue, searchText} = this.state;
+    return todos.filter((todo) => {
+      switch (filterValue) {
         case 'all':
           return todo.title.includes(searchText);
         case 'completed':
@@ -68,6 +101,12 @@ class App extends Component {
           throw new Error('Unknown filter');
       }
     });
+  };
+
+  render() {
+    const {todos, filter, searchText, sortBy, sortOrder} = this.state;
+    const visibleTodos = this.sort(this.filter(todos.valueSeq()));
+
     return (
       <div style={styles.appContainer}>
         <TodoForm addTodoHandler={this.addTodoHandler} />
@@ -79,7 +118,10 @@ class App extends Component {
           changeSearchTextHandler={this.changeSearchTextHandler}
         />
         <TodoList
-          todos={visibleTodos.valueSeq()}
+          todos={visibleTodos}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          sortChangeHandler={this.sortChangeHandler}
           toggleCompleteHandler={this.toggleCompleteHandler}
           updateTodoDateHandler={this.updateTodoDateHandler}
         />
