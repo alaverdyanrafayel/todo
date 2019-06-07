@@ -22,6 +22,7 @@ class App extends Component {
   state = {
     todos: Map({}),
     filter: 'all',
+    searchText: '',
   };
 
   addTodoHandler = (data, cb) => {
@@ -31,6 +32,10 @@ class App extends Component {
       }),
       cb,
     );
+  };
+
+  changeSearchTextHandler = ({target: {value: searchText}}) => {
+    this.setState({searchText});
   };
 
   changeFilterHandler = (filter) => {
@@ -50,15 +55,15 @@ class App extends Component {
   };
 
   render() {
-    const {todos, filter} = this.state;
+    const {todos, filter, searchText} = this.state;
     const visibleTodos = todos.filter((todo) => {
       switch (filter) {
         case 'all':
-          return true;
+          return todo.title.includes(searchText);
         case 'completed':
-          return todo.completed;
+          return todo.completed && todo.title.includes(searchText);
         case 'uncompleted':
-          return !todo.completed;
+          return !todo.completed && todo.title.includes(searchText);
         default:
           throw new Error('Unknown filter');
       }
@@ -69,7 +74,9 @@ class App extends Component {
         <TodoFilter
           filterButtons={filterButtons}
           filter={filter}
+          searchText={searchText}
           changeFilterHandler={this.changeFilterHandler}
+          changeSearchTextHandler={this.changeSearchTextHandler}
         />
         <TodoList
           todos={visibleTodos.valueSeq()}

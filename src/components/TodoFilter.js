@@ -1,6 +1,12 @@
 import React from 'react';
 
-export const TodoFilter = ({changeFilterHandler, filterButtons, filter}) => {
+export const TodoFilter = ({
+  changeFilterHandler,
+  filterButtons,
+  filter,
+  searchText,
+  changeSearchTextHandler,
+}) => {
   return (
     <div style={styles.container}>
       {filterButtons.map(({label, value}) => {
@@ -12,6 +18,13 @@ export const TodoFilter = ({changeFilterHandler, filterButtons, filter}) => {
           </button>
         );
       })}
+      <input
+        type='text'
+        value={searchText}
+        onChange={changeSearchTextHandler}
+        placeholder='Search...'
+        style={styles.searchInput}
+      />
     </div>
   );
 };
@@ -37,5 +50,16 @@ const styles = {
     padding: '6px 20px',
     margin: 5,
     color: '#fff',
+  },
+  searchInput: {
+    margin: 0,
+    fontSize: 16,
+    lineHeight: 10,
+    height: 10,
+    padding: 10,
+    border: '1px solid rgb(221, 221, 221)',
+    background: 'rgb(255, 255, 255)',
+    borderRadius: 6,
+    color: 'rgb(136, 136, 136)',
   },
 };
