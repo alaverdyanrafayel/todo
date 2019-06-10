@@ -4,47 +4,46 @@ import moment from 'moment';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 import {Todo} from './types';
+import {Filter, SortBy, SortOrder} from './enums';
+
+type AppState = {
+  todos: Map<string, Todo>;
+  filter: Filter;
+  searchText: string;
+  sortBy: SortBy;
+  sortOrder: SortOrder;
+};
 
 const filterButtons = [
   {
-    value: 'all',
+    value: Filter.all,
     label: 'All',
   },
   {
-    value: 'uncompleted',
+    value: Filter.uncompleted,
     label: 'Uncompleted',
   },
   {
-    value: 'completed',
+    value: Filter.completed,
     label: 'Completed',
   },
 ];
 
-type AppState = {
-  todos: Map<string, Todo>;
-  filter: string;
-  searchText: string;
-  sortBy: string;
-  sortOrder: string;
-};
-
-type AppProps = {};
-
-class App extends Component<AppProps, AppState> {
-  state = {
+class App extends Component<{}, AppState> {
+  state: AppState = {
     todos: Map<string, Todo>(),
-    filter: 'all',
+    filter: Filter.all,
     searchText: '',
-    sortBy: 'date',
-    sortOrder: 'desc',
+    sortBy: SortBy.title,
+    sortOrder: SortOrder.desc,
   };
 
-  addTodoHandler = (data: Todo, cb: Function): void => {
+  addTodoHandler = (data: Todo, cb: () => void): void => {
     this.setState(
       ({todos}: {todos: Map<string, Todo>}) => ({
         todos: todos.set(data.id, data),
       }),
-      cb(),
+      cb,
     );
   };
 
@@ -52,30 +51,36 @@ class App extends Component<AppProps, AppState> {
     this.setState({searchText: event.target.value});
   };
 
-  changeFilterHandler = (filter: string): void => {
+  changeFilterHandler = (filter: Filter): void => {
     this.setState({filter});
   };
 
   toggleCompleteHandler = (id: string): void => {
     this.setState(({todos}: {todos: Map<string, Todo>}) => ({
-      todos: todos.updateIn([id, 'completed'], (completed) => !completed),
+      todos: todos.update(id, (todo) => {
+        todo.completed = !todo.completed;
+        return todo;
+      }),
     }));
   };
 
   updateTodoDateHandler = (id: string, date: moment.Moment): void => {
     this.setState(({todos}: {todos: Map<string, Todo>}) => ({
-      todos: todos.setIn([id, 'date'], date),
+      todos: todos.update(id, (todo) => {
+        todo.date = date;
+        return todo;
+      }),
     }));
   };
 
-  sortChangeHandler = (sortBy: string): void => {
+  sortChangeHandler = (sortBy: SortBy): void => {
     const {sortBy: prevSortBy} = this.state;
     if (prevSortBy === sortBy) {
       this.setState(({sortOrder}: {sortOrder: string}) => ({
-        sortOrder: sortOrder === 'asc' ? 'desc' : 'asc',
+        sortOrder: sortOrder === SortOrder.asc ? SortOrder.desc : SortOrder.asc,
       }));
     } else {
-      this.setState({sortBy, sortOrder: 'desc'});
+      this.setState({sortBy, sortOrder: SortOrder.desc});
     }
   };
 
@@ -100,20 +105,30 @@ class App extends Component<AppProps, AppState> {
       return this.sortCompare(a, b, sortBy, sortOrder);
     });
   };
-  filter = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
-    const {filter: filterValue, searchText} = this.state;
+
+  filterByType = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
+    const {filter: filterValue} = this.state;
     return todos.filter((todo: Todo) => {
       switch (filterValue) {
         case 'all':
-          return todo.title.includes(searchText);
+          return true;
         case 'completed':
-          return todo.completed && todo.title.includes(searchText);
+          return todo.completed;
         case 'uncompleted':
-          return !todo.completed && todo.title.includes(searchText);
+          return !todo.completed;
         default:
           throw new Error('Unknown filter');
       }
     });
+  };
+
+  filterByTitle = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
+    const {searchText} = this.state;
+    if (!searchText) return todos;
+    return todos.filter((todo: Todo) => todo.title.includes(searchText));
+  };
+  filter = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
+    return this.filterByTitle(this.filterByType(todos));
   };
 
   render() {

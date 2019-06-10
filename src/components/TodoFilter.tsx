@@ -1,20 +1,21 @@
 import React from 'react';
+import {Filter} from '../enums';
 
 type TodoFilterProps = {
-  changeFilterHandler: Function;
-  filterButtons: Array<{label: string; value: string}>;
+  changeFilterHandler: (filter: Filter) => void;
+  filterButtons: Array<{label: string; value: Filter}>;
   filter: string;
   searchText: string;
-  changeSearchTextHandler: Function;
+  changeSearchTextHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export const TodoFilter = ({
+export const TodoFilter: React.FC<TodoFilterProps> = ({
   changeFilterHandler,
   filterButtons,
   filter,
   searchText,
   changeSearchTextHandler,
-}: TodoFilterProps) => {
+}) => {
   return (
     <div style={styles.container}>
       {filterButtons.map(({label, value}) => {

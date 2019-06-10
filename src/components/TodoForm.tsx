@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import uuid from 'uuid/v4';
 import moment from 'moment';
+import {Todo} from '../types';
 
 type TodoFormState = {
   title: string;
   date: moment.Moment;
 };
 type TodoFormProps = {
-  addTodoHandler: Function;
+  addTodoHandler: (data: Todo, cb: () => void) => void;
 };
 
 export class TodoForm extends Component<TodoFormProps, TodoFormState> {
@@ -17,11 +18,17 @@ export class TodoForm extends Component<TodoFormProps, TodoFormState> {
   };
 
   inputChangeHandler = ({target: {value, name}}: {target: HTMLInputElement}): void => {
-    // @ts-ignore
-    this.setState({[name]: value});
+    switch (name) {
+      case 'title':
+        return this.setState({title: value});
+      case 'date':
+        return this.setState({date: moment(value)});
+      default:
+        throw new Error('invalid input name');
+    }
   };
 
-  clearInput = () => {
+  clearInput = (): void => {
     this.setState({title: '', date: moment()});
   };
 

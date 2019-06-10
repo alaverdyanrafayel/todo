@@ -2,38 +2,43 @@ import React from 'react';
 import moment from 'moment';
 import {Seq} from 'immutable';
 import {Todo} from '../types';
+import {SortBy, SortOrder} from '../enums';
 
 type TodoListProps = {
   todos: Seq.Indexed<Todo>;
-  toggleCompleteHandler: Function;
-  updateTodoDateHandler: Function;
-  sortBy: string;
-  sortOrder: string;
-  sortChangeHandler: Function;
+  toggleCompleteHandler: (id: string) => void;
+  updateTodoDateHandler: (id: string, date: moment.Moment) => void;
+  sortBy: SortBy;
+  sortOrder: SortOrder;
+  sortChangeHandler: (SortBy: SortBy) => void;
 };
 
-export const TodoList = ({
+export const TodoList: React.FC<TodoListProps> = ({
   todos,
   toggleCompleteHandler,
   updateTodoDateHandler,
   sortBy,
   sortOrder,
   sortChangeHandler,
-}: TodoListProps) => {
+}) => {
   return (
     <table>
       <thead>
         <tr>
           <th />
-          <th onClick={() => sortChangeHandler('title')}>
+          <th onClick={() => sortChangeHandler(SortBy.title)}>
             Title
-            {sortBy === 'title' && sortOrder === 'desc' && <i className='sort-by-desc' />}
-            {sortBy === 'title' && sortOrder === 'asc' && <i className='sort-by-asc' />}
+            {sortBy === SortBy.title && sortOrder === SortOrder.desc && (
+              <i className='sort-by-desc' />
+            )}
+            {sortBy === SortBy.title && sortOrder === 'asc' && <i className='sort-by-asc' />}
           </th>
-          <th onClick={() => sortChangeHandler('date')}>
+          <th onClick={() => sortChangeHandler(SortBy.title)}>
             Date
-            {sortBy === 'date' && sortOrder === 'desc' && <i className='sort-by-desc' />}
-            {sortBy === 'date' && sortOrder === 'asc' && <i className='sort-by-asc' />}
+            {sortBy === SortBy.date && sortOrder === SortOrder.desc && (
+              <i className='sort-by-desc' />
+            )}
+            {sortBy === SortBy.date && sortOrder === SortOrder.asc && <i className='sort-by-asc' />}
           </th>
           <th>Action</th>
         </tr>
