@@ -84,16 +84,24 @@ class App extends Component<{}, AppState> {
     }
   };
 
+  compareTodoByDate(a: Todo, b: Todo) {
+    return this.state.sortOrder === 'desc'
+      ? moment(a.date).diff(moment(b.date))
+      : moment(b.date).diff(moment(a.date));
+  }
+
+  compareTodoByTitle(a: Todo, b: Todo) {
+    return this.state.sortOrder === 'desc'
+      ? a.title.localeCompare(b.title)
+      : b.title.localeCompare(a.title);
+  }
+
   sortCompare(a: Todo, b: Todo, sortBy = 'date', sortOrder = 'desc'): number {
     switch (sortBy) {
-      case 'date':
-        return sortOrder === 'desc'
-          ? moment(a.date).diff(moment(b.date))
-          : moment(b.date).diff(moment(a.date));
-      case 'title':
-        return sortOrder === 'desc'
-          ? a.title.localeCompare(b.title)
-          : b.title.localeCompare(a.title);
+      case SortBy.date:
+        return this.compareTodoByDate(a, b);
+      case SortBy.title:
+        return this.compareTodoByTitle(a, b);
       default:
         throw new Error('Incorrect sortBy value');
     }
