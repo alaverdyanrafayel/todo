@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import uuid from 'uuid/v4';
 import moment from 'moment';
-import {Todo} from '../types';
+import {Todo, SortBy} from '../types';
 
 type TodoFormState = {
   title: string;
@@ -19,9 +19,9 @@ export class TodoForm extends Component<TodoFormProps, TodoFormState> {
 
   inputChangeHandler = ({target: {value, name}}: {target: HTMLInputElement}): void => {
     switch (name) {
-      case 'title':
+      case SortBy.title:
         return this.setState({title: value});
-      case 'date':
+      case SortBy.date:
         return this.setState({date: moment(value)});
       default:
         throw new Error('invalid input name');

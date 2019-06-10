@@ -1,9 +1,9 @@
 import React from 'react';
-import {Filter} from '../enums';
+import {FilterBy} from '../types';
 
 type TodoFilterProps = {
-  changeFilterHandler: (filter: Filter) => void;
-  filterButtons: Array<{label: string; value: Filter}>;
+  changeFilterHandler: (filter: FilterBy) => void;
+  filterButtons: Array<{label: string; value: FilterBy}>;
   filter: string;
   searchText: string;
   changeSearchTextHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;

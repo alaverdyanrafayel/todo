@@ -1,8 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import {Seq} from 'immutable';
-import {Todo} from '../types';
-import {SortBy, SortOrder} from '../enums';
+import {Todo, SortBy, SortOrder} from '../types';
 
 type TodoListProps = {
   todos: Seq.Indexed<Todo>;
@@ -31,9 +30,11 @@ export const TodoList: React.FC<TodoListProps> = ({
             {sortBy === SortBy.title && sortOrder === SortOrder.desc && (
               <i className='sort-by-desc' />
             )}
-            {sortBy === SortBy.title && sortOrder === 'asc' && <i className='sort-by-asc' />}
+            {sortBy === SortBy.title && sortOrder === SortOrder.asc && (
+              <i className='sort-by-asc' />
+            )}
           </th>
-          <th onClick={() => sortChangeHandler(SortBy.title)}>
+          <th onClick={() => sortChangeHandler(SortBy.date)}>
             Date
             {sortBy === SortBy.date && sortOrder === SortOrder.desc && (
               <i className='sort-by-desc' />

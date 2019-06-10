@@ -4,35 +4,34 @@ import moment from 'moment';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 import {Todo} from './types';
-import {Filter, SortBy, SortOrder} from './enums';
+import {FilterBy, SortBy, SortOrder} from './types';
 
 type AppState = {
   todos: Map<string, Todo>;
-  filter: Filter;
+  filter: FilterBy;
   searchText: string;
   sortBy: SortBy;
   sortOrder: SortOrder;
 };
-
 const filterButtons = [
   {
-    value: Filter.all,
+    value: FilterBy.all,
     label: 'All',
   },
   {
-    value: Filter.uncompleted,
+    value: FilterBy.uncompleted,
     label: 'Uncompleted',
   },
   {
-    value: Filter.completed,
+    value: FilterBy.completed,
     label: 'Completed',
   },
 ];
 
 class App extends Component<{}, AppState> {
   state: AppState = {
-    todos: Map<string, Todo>(),
-    filter: Filter.all,
+    todos: Map({}),
+    filter: FilterBy.all,
     searchText: '',
     sortBy: SortBy.title,
     sortOrder: SortOrder.desc,
@@ -51,7 +50,7 @@ class App extends Component<{}, AppState> {
     this.setState({searchText: event.target.value});
   };
 
-  changeFilterHandler = (filter: Filter): void => {
+  changeFilterHandler = (filter: FilterBy): void => {
     this.setState({filter});
   };
 
@@ -85,7 +84,7 @@ class App extends Component<{}, AppState> {
   };
 
   compareTodoByDate(a: Todo, b: Todo) {
-    return this.state.sortOrder === 'desc'
+    return this.state.sortOrder === SortOrder.desc
       ? moment(a.date).diff(moment(b.date))
       : moment(b.date).diff(moment(a.date));
   }
@@ -96,7 +95,7 @@ class App extends Component<{}, AppState> {
       : b.title.localeCompare(a.title);
   }
 
-  sortCompare(a: Todo, b: Todo, sortBy = 'date', sortOrder = 'desc'): number {
+  sortCompare(a: Todo, b: Todo, sortBy = 'date'): number {
     switch (sortBy) {
       case SortBy.date:
         return this.compareTodoByDate(a, b);
@@ -108,9 +107,9 @@ class App extends Component<{}, AppState> {
   }
 
   sort = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
-    const {sortBy, sortOrder} = this.state;
+    const {sortBy} = this.state;
     return todos.sort((a, b) => {
-      return this.sortCompare(a, b, sortBy, sortOrder);
+      return this.sortCompare(a, b, sortBy);
     });
   };
 
