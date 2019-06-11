@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
-import {Map, Seq} from 'immutable';
+import {Map, Seq, RecordOf} from 'immutable';
 import moment from 'moment';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 import {Todo} from './types';
 import {FilterBy, SortBy, SortOrder} from './types';
+import {TodoRecord} from './records';
 
 type AppState = {
-  todos: Map<string, Todo>;
+  todos: Map<string, RecordOf<Todo>>;
   filter: FilterBy;
   searchText: string;
   sortBy: SortBy;
@@ -39,8 +40,8 @@ class App extends Component<{}, AppState> {
 
   addTodoHandler = (data: Todo, cb: () => void): void => {
     this.setState(
-      ({todos}: {todos: Map<string, Todo>}) => ({
-        todos: todos.set(data.id, data),
+      ({todos}: {todos: Map<string, RecordOf<Todo>>}) => ({
+        todos: todos.set(data.id, new TodoRecord(data)),
       }),
       cb,
     );
@@ -55,19 +56,17 @@ class App extends Component<{}, AppState> {
   };
 
   toggleCompleteHandler = (id: string): void => {
-    this.setState(({todos}: {todos: Map<string, Todo>}) => ({
+    this.setState(({todos}: {todos: Map<string, RecordOf<Todo>>}) => ({
       todos: todos.update(id, (todo) => {
-        todo.completed = !todo.completed;
-        return todo;
+        return todo.set('completed', !todo.completed);
       }),
     }));
   };
 
   updateTodoDateHandler = (id: string, date: moment.Moment): void => {
-    this.setState(({todos}: {todos: Map<string, Todo>}) => ({
+    this.setState(({todos}: {todos: Map<string, RecordOf<Todo>>}) => ({
       todos: todos.update(id, (todo) => {
-        todo.date = date;
-        return todo;
+        return todo.set('date', date);
       }),
     }));
   };
