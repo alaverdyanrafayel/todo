@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
-import uuid from 'uuid/v4';
 import moment from 'moment';
-import {Todo, SortBy} from '../types';
+import {SortBy} from '../types';
+import {TodoModel} from '../models/todo';
 
 type TodoFormState = {
   title: string;
   date: moment.Moment;
 };
 type TodoFormProps = {
-  addTodoHandler: (data: Todo, cb: () => void) => void;
+  addTodoHandler: (data: any, cb: () => void) => void;
 };
 
 export class TodoForm extends Component<TodoFormProps, TodoFormState> {
@@ -34,9 +34,8 @@ export class TodoForm extends Component<TodoFormProps, TodoFormState> {
 
   submitFormHandler = (event: React.FormEvent<EventTarget>): void => {
     event.preventDefault();
-    const id = uuid();
     const {title, date} = this.state;
-    this.props.addTodoHandler({id, title, date, completed: false}, this.clearInput);
+    this.props.addTodoHandler({title, date}, this.clearInput);
   };
 
   render() {

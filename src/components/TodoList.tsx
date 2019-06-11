@@ -1,10 +1,11 @@
 import React from 'react';
 import moment from 'moment';
 import {Seq} from 'immutable';
-import {Todo, SortBy, SortOrder} from '../types';
+import {SortBy, SortOrder} from '../types';
+import {TodoModel} from '../models/todo';
 
 type TodoListProps = {
-  todos: Seq.Indexed<Todo>;
+  todos: Seq.Indexed<TodoModel>;
   toggleCompleteHandler: (id: string) => void;
   updateTodoDateHandler: (id: string, date: moment.Moment) => void;
   sortBy: SortBy;

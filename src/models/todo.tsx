@@ -1,6 +1,6 @@
 import {Record} from 'immutable';
 import moment from 'moment';
-import {Todo} from '../types';
+import uuid from 'uuid';
 
 export const TodoRecord = Record({
   id: '',
@@ -10,7 +10,7 @@ export const TodoRecord = Record({
 });
 
 export class TodoModel extends TodoRecord {
-  static create(props: Todo) {
-    return new TodoModel(props);
+  static create(props: TodoModel) {
+    return new TodoModel({...props, id: uuid()});
   }
 }

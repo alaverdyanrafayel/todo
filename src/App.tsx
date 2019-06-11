@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import {Map, Seq, RecordOf} from 'immutable';
+import {Map, Seq} from 'immutable';
 import moment from 'moment';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
-import {Todo} from './types';
 import {FilterBy, SortBy, SortOrder} from './types';
 import {TodoModel} from './models/todo';
 
 type AppState = {
-  todos: Map<string, RecordOf<Todo>>;
+  todos: Map<string, TodoModel>;
   filter: FilterBy;
   searchText: string;
   sortBy: SortBy;
@@ -38,13 +37,13 @@ class App extends Component<{}, AppState> {
     sortOrder: SortOrder.desc,
   };
 
-  addTodoHandler = (data: Todo, cb: () => void): void => {
-    this.setState(
-      ({todos}: {todos: Map<string, RecordOf<Todo>>}) => ({
-        todos: todos.set(data.id, TodoModel.create(data)),
-      }),
-      cb,
-    );
+  addTodoHandler = (data: TodoModel, cb: () => void): void => {
+    this.setState(({todos}: {todos: Map<string, TodoModel>}) => {
+      const todo = TodoModel.create(data);
+      return {
+        todos: todos.set(todo.id, todo),
+      };
+    }, cb);
   };
 
   changeSearchTextHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +55,7 @@ class App extends Component<{}, AppState> {
   };
 
   toggleCompleteHandler = (id: string): void => {
-    this.setState(({todos}: {todos: Map<string, RecordOf<Todo>>}) => ({
+    this.setState(({todos}: {todos: Map<string, TodoModel>}) => ({
       todos: todos.update(id, (todo) => {
         return todo.set('completed', !todo.completed);
       }),
@@ -64,7 +63,7 @@ class App extends Component<{}, AppState> {
   };
 
   updateTodoDateHandler = (id: string, date: moment.Moment): void => {
-    this.setState(({todos}: {todos: Map<string, RecordOf<Todo>>}) => ({
+    this.setState(({todos}: {todos: Map<string, TodoModel>}) => ({
       todos: todos.update(id, (todo) => {
         return todo.set('date', date);
       }),
@@ -82,19 +81,19 @@ class App extends Component<{}, AppState> {
     }
   };
 
-  compareTodoByDate(a: Todo, b: Todo) {
+  compareTodoByDate(a: TodoModel, b: TodoModel) {
     return this.state.sortOrder === SortOrder.desc
       ? moment(a.date).diff(moment(b.date))
       : moment(b.date).diff(moment(a.date));
   }
 
-  compareTodoByTitle(a: Todo, b: Todo) {
+  compareTodoByTitle(a: TodoModel, b: TodoModel) {
     return this.state.sortOrder === 'desc'
       ? a.title.localeCompare(b.title)
       : b.title.localeCompare(a.title);
   }
 
-  sortCompare(a: Todo, b: Todo, sortBy = 'date'): number {
+  sortCompare(a: TodoModel, b: TodoModel, sortBy = 'date'): number {
     switch (sortBy) {
       case SortBy.date:
         return this.compareTodoByDate(a, b);
@@ -105,16 +104,16 @@ class App extends Component<{}, AppState> {
     }
   }
 
-  sort = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
+  sort = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
     const {sortBy} = this.state;
     return todos.sort((a, b) => {
       return this.sortCompare(a, b, sortBy);
     });
   };
 
-  filterByType = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
+  filterByType = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
     const {filter: filterValue} = this.state;
-    return todos.filter((todo: Todo) => {
+    return todos.filter((todo: TodoModel) => {
       switch (filterValue) {
         case 'all':
           return true;
@@ -128,12 +127,12 @@ class App extends Component<{}, AppState> {
     });
   };
 
-  filterByTitle = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
+  filterByTitle = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
     const {searchText} = this.state;
     if (!searchText) return todos;
-    return todos.filter((todo: Todo) => todo.title.includes(searchText));
+    return todos.filter((todo: TodoModel) => todo.title.includes(searchText));
   };
-  filter = (todos: Seq.Indexed<Todo>): Seq.Indexed<Todo> => {
+  filter = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
     return this.filterByTitle(this.filterByType(todos));
   };
 
