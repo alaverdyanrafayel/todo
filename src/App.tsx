@@ -5,6 +5,7 @@ import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 import {FilterBy, SortBy, SortOrder} from './types';
 import {TodoModel} from './models/todo';
+import settings from './settings.json';
 
 type AppState = {
   todos: Map<string, TodoModel>;
@@ -37,7 +38,17 @@ class App extends Component<{}, AppState> {
     sortOrder: SortOrder.desc,
   };
 
-  addTodoHandler = (data: {title: string; date: moment.Moment}, cb: () => void): void => {
+  componentDidMount() {
+    if (settings.todos) {
+      const todos = settings.todos.reduce((acc, item) => {
+        const todo = TodoModel.create({...item, date: moment(item.date, 'YYYY-MM-DD')});
+        return acc.set(todo.id, todo);
+      }, Map<string, TodoModel>());
+      this.setState({todos});
+    }
+  }
+
+  addTodoHandler = (data: Partial<TodoModel>, cb: () => void): void => {
     this.setState(({todos}: {todos: Map<string, TodoModel>}) => {
       const todo = TodoModel.create(data);
       return {
@@ -139,17 +150,20 @@ class App extends Component<{}, AppState> {
   render() {
     const {todos, filter, searchText, sortBy, sortOrder} = this.state;
     const visibleTodos = this.sort(this.filter(todos.valueSeq()));
+    const visibleFilterButtons = filterButtons.filter((button) => !!settings.filters[button.value]);
 
     return (
       <div style={styles.appContainer}>
         <TodoForm addTodoHandler={this.addTodoHandler} />
-        <TodoFilter
-          filterButtons={filterButtons}
-          filter={filter}
-          searchText={searchText}
-          changeFilterHandler={this.changeFilterHandler}
-          changeSearchTextHandler={this.changeSearchTextHandler}
-        />
+        {!!settings.showFiltersSection && (
+          <TodoFilter
+            filterButtons={visibleFilterButtons}
+            filter={filter}
+            searchText={searchText}
+            changeFilterHandler={this.changeFilterHandler}
+            changeSearchTextHandler={this.changeSearchTextHandler}
+          />
+        )}
         <TodoList
           todos={visibleTodos}
           sortBy={sortBy}
@@ -165,11 +179,13 @@ class App extends Component<{}, AppState> {
 
 const styles = {
   appContainer: {
+    background: settings.themeColor,
     padding: 30,
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    height: '100vh',
   },
 };
 

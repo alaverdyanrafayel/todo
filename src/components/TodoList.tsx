@@ -3,6 +3,7 @@ import moment from 'moment';
 import {Seq} from 'immutable';
 import {SortBy, SortOrder} from '../types';
 import {TodoModel} from '../models/todo';
+import settings from '../settings.json';
 
 type TodoListProps = {
   todos: Seq.Indexed<TodoModel>;
@@ -35,13 +36,17 @@ export const TodoList: React.FC<TodoListProps> = ({
               <i className='sort-by-asc' />
             )}
           </th>
-          <th onClick={() => sortChangeHandler(SortBy.date)}>
-            Date
-            {sortBy === SortBy.date && sortOrder === SortOrder.desc && (
-              <i className='sort-by-desc' />
-            )}
-            {sortBy === SortBy.date && sortOrder === SortOrder.asc && <i className='sort-by-asc' />}
-          </th>
+          {!!settings.showDates && (
+            <th onClick={() => sortChangeHandler(SortBy.date)}>
+              Date
+              {sortBy === SortBy.date && sortOrder === SortOrder.desc && (
+                <i className='sort-by-desc' />
+              )}
+              {sortBy === SortBy.date && sortOrder === SortOrder.asc && (
+                <i className='sort-by-asc' />
+              )}
+            </th>
+          )}
           <th>Action</th>
         </tr>
       </thead>
@@ -57,7 +62,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                 />
               </td>
               <td>{title}</td>
-              <td>{moment(date).format('YYYY-MM-DD')}</td>
+              {!!settings.showDates && <td>{moment(date).format('YYYY-MM-DD')}</td>}
               <td>
                 <button onClick={() => updateTodoDateHandler(id, moment(date).add(1, 'days'))}>
                   +
