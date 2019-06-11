@@ -5,7 +5,7 @@ import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 import {Todo} from './types';
 import {FilterBy, SortBy, SortOrder} from './types';
-import {TodoRecord} from './records';
+import {TodoModel} from './models/todo';
 
 type AppState = {
   todos: Map<string, RecordOf<Todo>>;
@@ -41,7 +41,7 @@ class App extends Component<{}, AppState> {
   addTodoHandler = (data: Todo, cb: () => void): void => {
     this.setState(
       ({todos}: {todos: Map<string, RecordOf<Todo>>}) => ({
-        todos: todos.set(data.id, new TodoRecord(data)),
+        todos: todos.set(data.id, TodoModel.create(data)),
       }),
       cb,
     );
