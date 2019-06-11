@@ -8,7 +8,7 @@ type TodoFormState = {
   date: moment.Moment;
 };
 type TodoFormProps = {
-  addTodoHandler: (data: any, cb: () => void) => void;
+  addTodoHandler: (data: {title: string; date: moment.Moment}, cb: () => void) => void;
 };
 
 export class TodoForm extends Component<TodoFormProps, TodoFormState> {

@@ -10,7 +10,7 @@ export const TodoRecord = Record({
 });
 
 export class TodoModel extends TodoRecord {
-  static create(props: TodoModel) {
+  static create(props: {title: string; date: moment.Moment}) {
     return new TodoModel({...props, id: uuid()});
   }
 }
