@@ -1,89 +1,57 @@
 {
   "$schema": "http://json-schema.org/schema#",
+  "title": "Sttings",
+  "description": "General settings for todo project",
   "type": "object",
   "properties": {
     "themeColor": {
+      "description": "Theme color for the app",
       "type": "string"
     },
     "showDates": {
+      "description": "Show/hide dates from todo list",
       "type": "boolean"
     },
     "showFiltersSection": {
+      "description": "Show/hide filters section for todos list",
       "type": "boolean"
     },
     "filters": {
       "type": "object",
       "properties": {
         "all": {
+          "description": "Show/hide `show all todos`filter button",
           "type": "boolean"
         },
         "uncompleted": {
+          "description": "Show/hide `show only uncompleted`filter button",
           "type": "boolean"
         },
         "completed": {
+          "description": "Show/hide `show only completed`filter button",
           "type": "boolean"
         }
       },
       "required": ["all", "uncompleted", "completed"]
     },
     "todos": {
+      "title": "todos list",
+      "description": "default todos to load when app starts",
       "type": "array",
       "items": [
         {
           "type": "object",
           "properties": {
             "title": {
+              "description": "todo title",
               "type": "string"
             },
             "date": {
+              "description": "todo date",
               "type": "string"
             },
             "completed": {
-              "type": "boolean"
-            }
-          },
-          "required": ["title", "date", "completed"]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "date": {
-              "type": "string"
-            },
-            "completed": {
-              "type": "boolean"
-            }
-          },
-          "required": ["title", "date", "completed"]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "date": {
-              "type": "string"
-            },
-            "completed": {
-              "type": "boolean"
-            }
-          },
-          "required": ["title", "date", "completed"]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "date": {
-              "type": "string"
-            },
-            "completed": {
+              "description": "todo completion status",
               "type": "boolean"
             }
           },

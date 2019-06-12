@@ -46,7 +46,7 @@ class App extends Component<{}, AppState> {
   async componentDidMount() {
     try {
       await this.checkSettingsFile();
-      this.getTodosFromSettings();
+      this.loadTodoFromSettings();
     } catch (error) {
       this.setState({error: error.message});
     }
@@ -57,7 +57,7 @@ class App extends Component<{}, AppState> {
     return yupSchema.validate(settings);
   }
 
-  getTodosFromSettings = () => {
+  loadTodoFromSettings = () => {
     if (settings.todos) {
       const todos = settings.todos.reduce((acc, item) => {
         const todo = TodoModel.create({...item, date: moment(item.date, 'YYYY-MM-DD')});
