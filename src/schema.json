@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "themeColor": {
+      "type": "string"
+    },
+    "showDates": {
+      "type": "boolean"
+    },
+    "showFiltersSection": {
+      "type": "boolean"
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "all": {
+          "type": "boolean"
+        },
+        "uncompleted": {
+          "type": "boolean"
+        },
+        "completed": {
+          "type": "boolean"
+        }
+      },
+      "required": ["all", "uncompleted", "completed"]
+    },
+    "todos": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "completed": {
+              "type": "boolean"
+            }
+          },
+          "required": ["title", "date", "completed"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "completed": {
+              "type": "boolean"
+            }
+          },
+          "required": ["title", "date", "completed"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "completed": {
+              "type": "boolean"
+            }
+          },
+          "required": ["title", "date", "completed"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "completed": {
+              "type": "boolean"
+            }
+          },
+          "required": ["title", "date", "completed"]
+        }
+      ]
+    }
+  },
+  "required": ["color", "filters", "showDate", "todos", "themeColor"]
+}

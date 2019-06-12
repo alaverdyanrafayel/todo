@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
 import {Map, Seq} from 'immutable';
 import moment from 'moment';
+//@ts-ignore
+import {buildYup} from 'json-schema-to-yup';
 import {TodoList, TodoForm, TodoFilter} from './components';
 import './index.css';
 import {FilterBy, SortBy, SortOrder} from './types';
 import {TodoModel} from './models/todo';
 import settings from './settings.json';
+import schema from './schema.json';
 
 type AppState = {
   todos: Map<string, TodoModel>;
@@ -13,6 +16,7 @@ type AppState = {
   searchText: string;
   sortBy: SortBy;
   sortOrder: SortOrder;
+  error: string;
 };
 const filterButtons = [
   {
@@ -36,9 +40,24 @@ class App extends Component<{}, AppState> {
     searchText: '',
     sortBy: SortBy.title,
     sortOrder: SortOrder.desc,
+    error: '',
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    try {
+      await this.checkSettingsFile();
+      this.getTodosFromSettings();
+    } catch (error) {
+      this.setState({error: error.message});
+    }
+  }
+
+  checkSettingsFile() {
+    const yupSchema = buildYup(schema, {});
+    return yupSchema.validate(settings);
+  }
+
+  getTodosFromSettings = () => {
     if (settings.todos) {
       const todos = settings.todos.reduce((acc, item) => {
         const todo = TodoModel.create({...item, date: moment(item.date, 'YYYY-MM-DD')});
@@ -46,7 +65,7 @@ class App extends Component<{}, AppState> {
       }, Map<string, TodoModel>());
       this.setState({todos});
     }
-  }
+  };
 
   addTodoHandler = (data: Partial<TodoModel>, cb: () => void): void => {
     this.setState(({todos}: {todos: Map<string, TodoModel>}) => {
@@ -148,7 +167,8 @@ class App extends Component<{}, AppState> {
   };
 
   render() {
-    const {todos, filter, searchText, sortBy, sortOrder} = this.state;
+    const {todos, filter, searchText, sortBy, sortOrder, error} = this.state;
+    if (!!error) return <div>{error}</div>;
     const visibleTodos = this.sort(this.filter(todos.valueSeq()));
     const visibleFilterButtons = filterButtons.filter((button) => !!settings.filters[button.value]);
 
