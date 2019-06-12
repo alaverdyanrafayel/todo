@@ -1,7 +1,20 @@
 import React from 'react';
 import moment from 'moment';
+import {Seq} from 'immutable';
+import {SortBy, SortOrder} from '../types';
+import {TodoModel} from '../models/todo';
+import settings from '../settings.json';
 
-export const TodoList = ({
+type TodoListProps = {
+  todos: Seq.Indexed<TodoModel>;
+  toggleCompleteHandler: (id: string) => void;
+  updateTodoDateHandler: (id: string, date: moment.Moment) => void;
+  sortBy: SortBy;
+  sortOrder: SortOrder;
+  sortChangeHandler: (SortBy: SortBy) => void;
+};
+
+export const TodoList: React.FC<TodoListProps> = ({
   todos,
   toggleCompleteHandler,
   updateTodoDateHandler,
@@ -14,16 +27,26 @@ export const TodoList = ({
       <thead>
         <tr>
           <th />
-          <th onClick={() => sortChangeHandler('title')}>
+          <th onClick={() => sortChangeHandler(SortBy.title)}>
             Title
-            {sortBy === 'title' && sortOrder === 'desc' && <i className='sort-by-desc' />}
-            {sortBy === 'title' && sortOrder === 'asc' && <i className='sort-by-asc' />}
+            {sortBy === SortBy.title && sortOrder === SortOrder.desc && (
+              <i className='sort-by-desc' />
+            )}
+            {sortBy === SortBy.title && sortOrder === SortOrder.asc && (
+              <i className='sort-by-asc' />
+            )}
           </th>
-          <th onClick={() => sortChangeHandler('date')}>
-            Date
-            {sortBy === 'date' && sortOrder === 'desc' && <i className='sort-by-desc' />}
-            {sortBy === 'date' && sortOrder === 'asc' && <i className='sort-by-asc' />}
-          </th>
+          {!!settings.showDates && (
+            <th onClick={() => sortChangeHandler(SortBy.date)}>
+              Date
+              {sortBy === SortBy.date && sortOrder === SortOrder.desc && (
+                <i className='sort-by-desc' />
+              )}
+              {sortBy === SortBy.date && sortOrder === SortOrder.asc && (
+                <i className='sort-by-asc' />
+              )}
+            </th>
+          )}
           <th>Action</th>
         </tr>
       </thead>
@@ -39,7 +62,7 @@ export const TodoList = ({
                 />
               </td>
               <td>{title}</td>
-              <td>{moment(date).format('YYYY-MM-DD')}</td>
+              {!!settings.showDates && <td>{moment(date).format('YYYY-MM-DD')}</td>}
               <td>
                 <button onClick={() => updateTodoDateHandler(id, moment(date).add(1, 'days'))}>
                   +

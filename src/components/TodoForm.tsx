@@ -1,26 +1,41 @@
 import React, {Component} from 'react';
-import uuid from 'uuid/v4';
 import moment from 'moment';
+import {SortBy} from '../types';
+import {TodoModel} from '../models/todo';
 
-export class TodoForm extends Component {
+type TodoFormState = {
+  title: string;
+  date: moment.Moment;
+};
+type TodoFormProps = {
+  addTodoHandler: (data: {title: string; date: moment.Moment}, cb: () => void) => void;
+};
+
+export class TodoForm extends Component<TodoFormProps, TodoFormState> {
   state = {
     title: '',
     date: moment(),
   };
 
-  inputChangeHandler = ({target: {value, name}}) => {
-    this.setState({[name]: value});
+  inputChangeHandler = ({target: {value, name}}: {target: HTMLInputElement}): void => {
+    switch (name) {
+      case SortBy.title:
+        return this.setState({title: value});
+      case SortBy.date:
+        return this.setState({date: moment(value)});
+      default:
+        throw new Error('invalid input name');
+    }
   };
 
-  clearInput = () => {
+  clearInput = (): void => {
     this.setState({title: '', date: moment()});
   };
 
-  submitFormHandler = (event) => {
+  submitFormHandler = (event: React.FormEvent<EventTarget>): void => {
     event.preventDefault();
-    const id = uuid();
     const {title, date} = this.state;
-    this.props.addTodoHandler({id, title, date, completed: false}, this.clearInput);
+    this.props.addTodoHandler({title, date}, this.clearInput);
   };
 
   render() {

@@ -1,6 +1,15 @@
 import React from 'react';
+import {FilterBy} from '../types';
 
-export const TodoFilter = ({
+type TodoFilterProps = {
+  changeFilterHandler: (filter: FilterBy) => void;
+  filterButtons: Array<{label: string; value: FilterBy}>;
+  filter: string;
+  searchText: string;
+  changeSearchTextHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+export const TodoFilter: React.FC<TodoFilterProps> = ({
   changeFilterHandler,
   filterButtons,
   filter,
@@ -21,7 +30,7 @@ export const TodoFilter = ({
       <input
         type='text'
         value={searchText}
-        onChange={changeSearchTextHandler}
+        onChange={(ev) => changeSearchTextHandler(ev)}
         placeholder='Search...'
         style={styles.searchInput}
       />
