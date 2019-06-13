@@ -1,32 +1,21 @@
 import moment from 'moment';
 import {Map} from 'immutable';
 import {TodoModel} from '../../models/todo';
+import {updateTodo, toggleComplete, addTodo, setTodos} from './actions';
 
 // Describing action names
-export const SET_TODOS = 'SET_TODOS';
-export const ADD_TODO = 'ADD_TODO';
-export const UPDATE_TODO = 'UPDATE_TODO';
-export const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE';
+export const SET_TODOS = 'SET_TODOS' as 'SET_TODOS';
+export const ADD_TODO = 'ADD_TODO' as 'ADD_TODO';
+export const UPDATE_TODO = 'UPDATE_TODO' as 'UPDATE_TODO';
+export const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE' as 'TOGGLE_COMPLETE';
 
-export type SetTodosAction = {
-  type: typeof SET_TODOS;
-  payload: Map<string, TodoModel>;
-};
+type SetTodosAction = ReturnType<typeof setTodos>;
 
-export type AddToDoAction = {
-  type: typeof ADD_TODO;
-  payload: TodoModel;
-};
+type AddToDoAction = ReturnType<typeof addTodo>;
 
-export type UpdateTodoAction = {
-  type: typeof UPDATE_TODO;
-  payload: {id: string; data: {date: moment.Moment}};
-};
+type UpdateTodoAction = ReturnType<typeof updateTodo>;
 
-export type ToggleCompleteAction = {
-  type: typeof TOGGLE_COMPLETE;
-  payload: string;
-};
+type ToggleCompleteAction = ReturnType<typeof toggleComplete>;
 
 export type TodosActionTypes =
   | SetTodosAction
