@@ -1,9 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 import {Seq} from 'immutable';
-import {SortBy, SortOrder} from '../types';
-import {TodoModel} from '../models/todo';
-import settings from '../settings.json';
+import {SortBy, SortOrder} from '../../types';
+import {TodoModel} from '../../models/todo';
+import settings from '../../settings.json';
 
 type TodoListProps = {
   todos: Seq.Indexed<TodoModel>;

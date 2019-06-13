@@ -1,5 +1,5 @@
 import React from 'react';
-import {FilterBy} from '../types';
+import {FilterBy} from '../../types';
 
 type TodoFilterProps = {
   changeFilterHandler: (filter: FilterBy) => void;

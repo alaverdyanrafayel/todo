@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
-import {SortBy} from '../types';
-import {TodoModel} from '../models/todo';
+import {SortBy} from '../../types';
 
 type TodoFormState = {
   title: string;
