@@ -4,9 +4,7 @@ import {TodosState} from './todos/types';
 
 const rootReducer = combineReducers({
   todos: todosReducer,
-} as any);
+});
 
-export type ReduxState = {
-  todos: TodosState;
-};
+export type ReduxState = ReturnType<typeof rootReducer>;
 export default rootReducer;
