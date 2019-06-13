@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import * as Redux from 'redux';
+import {connect} from 'react-redux';
 import {Map, Seq} from 'immutable';
 import moment from 'moment';
 //@ts-ignore
@@ -9,9 +11,18 @@ import {FilterBy, SortBy, SortOrder} from './types';
 import {TodoModel} from './models/todo';
 import settings from './settings.json';
 import schema from './schema.json';
+import * as todoActions from './store/todos/actions';
+import {ReduxState} from './store';
+
+type AppProps = {
+  todos: Map<string, TodoModel>;
+  setTodos: (todos: Map<string, TodoModel>) => void;
+  addTodo: (todo: TodoModel) => void;
+  toggleComplete: (id: string) => void;
+  updateTodo: (id: string, data: {date: moment.Moment}) => void;
+};
 
 type AppState = {
-  todos: Map<string, TodoModel>;
   filter: FilterBy;
   searchText: string;
   sortBy: SortBy;
@@ -33,9 +44,8 @@ const filterButtons = [
   },
 ];
 
-class App extends Component<{}, AppState> {
+class App extends Component<AppProps, AppState> {
   state: AppState = {
-    todos: Map({}),
     filter: FilterBy.all,
     searchText: '',
     sortBy: SortBy.title,
@@ -63,17 +73,13 @@ class App extends Component<{}, AppState> {
         const todo = TodoModel.create({...item, date: moment(item.date, 'YYYY-MM-DD')});
         return acc.set(todo.id, todo);
       }, Map<string, TodoModel>());
-      this.setState({todos});
+      this.props.setTodos(todos);
     }
   };
 
   addTodoHandler = (data: Partial<TodoModel>, cb: () => void): void => {
-    this.setState(({todos}: {todos: Map<string, TodoModel>}) => {
-      const todo = TodoModel.create(data);
-      return {
-        todos: todos.set(todo.id, todo),
-      };
-    }, cb);
+    this.props.addTodo(TodoModel.create(data));
+    cb();
   };
 
   changeSearchTextHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,19 +91,11 @@ class App extends Component<{}, AppState> {
   };
 
   toggleCompleteHandler = (id: string): void => {
-    this.setState(({todos}: {todos: Map<string, TodoModel>}) => ({
-      todos: todos.update(id, (todo) => {
-        return todo.set('completed', !todo.completed);
-      }),
-    }));
+    this.props.toggleComplete(id);
   };
 
   updateTodoDateHandler = (id: string, date: moment.Moment): void => {
-    this.setState(({todos}: {todos: Map<string, TodoModel>}) => ({
-      todos: todos.update(id, (todo) => {
-        return todo.set('date', date);
-      }),
-    }));
+    this.props.updateTodo(id, {date});
   };
 
   sortChangeHandler = (sortBy: SortBy): void => {
@@ -167,9 +165,10 @@ class App extends Component<{}, AppState> {
   };
 
   render() {
-    const {todos, filter, searchText, sortBy, sortOrder, error} = this.state;
+    const {filter, searchText, sortBy, sortOrder, error} = this.state;
     if (!!error) return <div>{error}</div>;
-    const visibleTodos = this.sort(this.filter(todos.valueSeq()));
+
+    const visibleTodos = this.sort(this.filter(this.props.todos.valueSeq()));
     const visibleFilterButtons = filterButtons.filter((button) => !!settings.filters[button.value]);
 
     return (
@@ -209,4 +208,19 @@ const styles = {
   },
 };
 
-export default App;
+const mapStateToProps = (state: ReduxState) => ({
+  todos: state.todos.todos,
+});
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch<Redux.AnyAction>) => ({
+  setTodos: (todos: Map<string, TodoModel>) => dispatch(todoActions.setTodos(todos)),
+  addTodo: (todo: TodoModel) => dispatch(todoActions.addTodo(todo)),
+  updateTodo: (id: string, data: {date: moment.Moment}) =>
+    dispatch(todoActions.updateTodo(id, data)),
+  toggleComplete: (id: string) => dispatch(todoActions.toggleComplete(id)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);

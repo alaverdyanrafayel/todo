@@ -8,7 +8,9 @@
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
     "react-scripts": "3.0.1",
+    "redux": "^4.0.1",
     "typescript": "^3.5.1",
     "uuid": "^3.3.2"
   },
@@ -34,10 +36,11 @@
     ]
   },
   "devDependencies": {
-    "@types/react": "^16.8.19",
-    "@types/react-dom": "^16.8.4",
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.7",
+    "@types/react": "^16.8.19",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.1.0",
     "@types/uuid": "^3.4.4"
   }
 }

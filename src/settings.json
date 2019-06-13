@@ -1,6 +1,6 @@
 {
   "themeColor": "gray",
-  "showDates": false,
+  "showDates": true,
   "showFiltersSection": true,
   "filters": {
     "all": true,
