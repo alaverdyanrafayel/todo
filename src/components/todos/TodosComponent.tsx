@@ -9,19 +9,20 @@ import {TodoModel} from '../../models/todo';
 import settings from '../../settings.json';
 
 type AppProps = {
-  todos: Map<string, TodoModel>;
+  todos: Seq.Indexed<TodoModel>;
   setTodos: (todos: Map<string, TodoModel>) => void;
   addTodo: (todo: TodoModel) => void;
   toggleComplete: (id: string) => void;
   updateTodo: (id: string, data: {date: moment.Moment}) => void;
-};
-
-type AppState = {
-  filter: FilterBy;
-  searchText: string;
+  updateSorting: (data: {sortBy: SortBy; sortOrder: SortOrder}) => void;
+  updateFilterBy: (filterBy: FilterBy) => void;
+  updateSearchText: (searchText: string) => void;
   sortBy: SortBy;
   sortOrder: SortOrder;
+  filterBy: FilterBy;
+  searchText: string;
 };
+
 const filterButtons = [
   {
     value: FilterBy.all,
@@ -37,14 +38,7 @@ const filterButtons = [
   },
 ];
 
-export class TodosComponent extends Component<AppProps, AppState> {
-  state: AppState = {
-    filter: FilterBy.all,
-    searchText: '',
-    sortBy: SortBy.title,
-    sortOrder: SortOrder.desc,
-  };
-
+export class TodosComponent extends Component<AppProps, {}> {
   async componentDidMount() {
     this.loadTodoFromSettings();
   }
@@ -65,11 +59,11 @@ export class TodosComponent extends Component<AppProps, AppState> {
   };
 
   changeSearchTextHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({searchText: event.target.value});
+    this.props.updateSearchText(event.target.value);
   };
 
-  changeFilterHandler = (filter: FilterBy): void => {
-    this.setState({filter});
+  changeFilterHandler = (filterBy: FilterBy): void => {
+    this.props.updateFilterBy(filterBy);
   };
 
   toggleCompleteHandler = (id: string): void => {
@@ -81,75 +75,18 @@ export class TodosComponent extends Component<AppProps, AppState> {
   };
 
   sortChangeHandler = (sortBy: SortBy): void => {
-    const {sortBy: prevSortBy} = this.state;
+    const {sortBy: prevSortBy, sortOrder: prevSortOrder} = this.props;
     if (prevSortBy === sortBy) {
-      this.setState(({sortOrder}: {sortOrder: string}) => ({
-        sortOrder: sortOrder === SortOrder.asc ? SortOrder.desc : SortOrder.asc,
-      }));
+      const sortOrder = prevSortOrder === SortOrder.asc ? SortOrder.desc : SortOrder.asc;
+      this.props.updateSorting({sortBy, sortOrder});
     } else {
-      this.setState({sortBy, sortOrder: SortOrder.desc});
+      this.props.updateSorting({sortBy, sortOrder: SortOrder.desc});
     }
-  };
-
-  compareTodoByDate(a: TodoModel, b: TodoModel) {
-    return this.state.sortOrder === SortOrder.desc
-      ? moment(a.date).diff(moment(b.date))
-      : moment(b.date).diff(moment(a.date));
-  }
-
-  compareTodoByTitle(a: TodoModel, b: TodoModel) {
-    return this.state.sortOrder === 'desc'
-      ? a.title.localeCompare(b.title)
-      : b.title.localeCompare(a.title);
-  }
-
-  sortCompare(a: TodoModel, b: TodoModel, sortBy = 'date'): number {
-    switch (sortBy) {
-      case SortBy.date:
-        return this.compareTodoByDate(a, b);
-      case SortBy.title:
-        return this.compareTodoByTitle(a, b);
-      default:
-        throw new Error('Incorrect sortBy value');
-    }
-  }
-
-  sort = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
-    const {sortBy} = this.state;
-    return todos.sort((a, b) => {
-      return this.sortCompare(a, b, sortBy);
-    });
-  };
-
-  filterByType = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
-    const {filter: filterValue} = this.state;
-    return todos.filter((todo: TodoModel) => {
-      switch (filterValue) {
-        case 'all':
-          return true;
-        case 'completed':
-          return todo.completed;
-        case 'uncompleted':
-          return !todo.completed;
-        default:
-          throw new Error('Unknown filter');
-      }
-    });
-  };
-
-  filterByTitle = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
-    const {searchText} = this.state;
-    if (!searchText) return todos;
-    return todos.filter((todo: TodoModel) => todo.title.includes(searchText));
-  };
-  filter = (todos: Seq.Indexed<TodoModel>): Seq.Indexed<TodoModel> => {
-    return this.filterByTitle(this.filterByType(todos));
   };
 
   render() {
-    const {filter, searchText, sortBy, sortOrder} = this.state;
+    const {sortBy, sortOrder, filterBy, searchText, todos} = this.props;
 
-    const visibleTodos = this.sort(this.filter(this.props.todos.valueSeq()));
     const visibleFilterButtons = filterButtons.filter((button) => !!settings.filters[button.value]);
 
     return (
@@ -158,14 +95,14 @@ export class TodosComponent extends Component<AppProps, AppState> {
         {!!settings.showFiltersSection && (
           <TodoFilter
             filterButtons={visibleFilterButtons}
-            filter={filter}
+            filterBy={filterBy}
             searchText={searchText}
             changeFilterHandler={this.changeFilterHandler}
             changeSearchTextHandler={this.changeSearchTextHandler}
           />
         )}
         <TodoList
-          todos={visibleTodos}
+          todos={todos}
           sortBy={sortBy}
           sortOrder={sortOrder}
           sortChangeHandler={this.sortChangeHandler}

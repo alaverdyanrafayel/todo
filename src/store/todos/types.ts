@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {Map} from 'immutable';
 import {TodoModel} from '../../models/todo';
 import {updateTodo, toggleComplete, addTodo, setTodos} from './actions';

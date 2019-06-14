@@ -4,7 +4,7 @@ import {FilterBy} from '../../types';
 type TodoFilterProps = {
   changeFilterHandler: (filter: FilterBy) => void;
   filterButtons: Array<{label: string; value: FilterBy}>;
-  filter: string;
+  filterBy: string;
   searchText: string;
   changeSearchTextHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
@@ -12,14 +12,14 @@ type TodoFilterProps = {
 export const TodoFilter: React.FC<TodoFilterProps> = ({
   changeFilterHandler,
   filterButtons,
-  filter,
+  filterBy,
   searchText,
   changeSearchTextHandler,
 }) => {
   return (
     <div style={styles.container}>
       {filterButtons.map(({label, value}) => {
-        const isActive = value === filter;
+        const isActive = value === filterBy;
         const style = isActive ? styles.activeButton : styles.button;
         return (
           <button key={value} style={style} onClick={() => changeFilterHandler(value)}>
