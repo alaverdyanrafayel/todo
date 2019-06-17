@@ -1,9 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import {Seq} from 'immutable';
-import {SortBy, SortOrder} from '../../types';
+import {SortBy, SortOrder, Settings} from '../../types';
 import {TodoModel} from '../../models/todo';
-import settings from '../../settings.json';
 
 type TodoListProps = {
   todos: Seq.Indexed<TodoModel>;
@@ -12,6 +11,7 @@ type TodoListProps = {
   sortBy: SortBy;
   sortOrder: SortOrder;
   sortChangeHandler: (SortBy: SortBy) => void;
+  settings: Settings;
 };
 
 export const TodoList: React.FC<TodoListProps> = ({
@@ -21,6 +21,7 @@ export const TodoList: React.FC<TodoListProps> = ({
   sortBy,
   sortOrder,
   sortChangeHandler,
+  settings,
 }) => {
   return (
     <table>

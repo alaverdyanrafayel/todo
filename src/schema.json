@@ -33,31 +33,6 @@
         }
       },
       "required": ["all", "uncompleted", "completed"]
-    },
-    "todos": {
-      "title": "todos list",
-      "description": "default todos to load when app starts",
-      "type": "array",
-      "items": [
-        {
-          "type": "object",
-          "properties": {
-            "title": {
-              "description": "todo title",
-              "type": "string"
-            },
-            "date": {
-              "description": "todo date",
-              "type": "string"
-            },
-            "completed": {
-              "description": "todo completion status",
-              "type": "boolean"
-            }
-          },
-          "required": ["title", "date", "completed"]
-        }
-      ]
     }
   },
   "required": ["color", "filters", "showDate", "todos", "themeColor"]

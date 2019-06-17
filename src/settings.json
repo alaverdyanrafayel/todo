@@ -1,32 +1,10 @@
 {
-  "themeColor": "gray",
+  "themeColor": "white",
   "showDates": true,
   "showFiltersSection": true,
   "filters": {
     "all": true,
     "uncompleted": true,
     "completed": false
-  },
-  "todos": [
-    {
-      "title": "example todo 1",
-      "date": "2018-02-15",
-      "completed": false
-    },
-    {
-      "title": "example todo 2",
-      "date": "2019-07-13",
-      "completed": true
-    },
-    {
-      "title": "example todo 3",
-      "date": "2019-02-15",
-      "completed": false
-    },
-    {
-      "title": "example todo 4",
-      "date": "2019-05-15",
-      "completed": false
-    }
-  ]
+  }
 }

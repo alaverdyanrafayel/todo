@@ -1,48 +1,38 @@
 import React, {Component} from 'react';
-//@ts-ignore
-import {buildYup} from 'json-schema-to-yup';
+import * as Redux from 'redux';
+import {connect} from 'react-redux';
 import './index.css';
-import settings from './settings.json';
-import schema from './schema.json';
 import {TodosContainer} from './containers';
+import {ReduxState} from './store';
+import * as settingsActions from './store/settings/actions';
+import {Settings} from './types';
 
-type AppState = {
+type AppProps = {
+  loadSettings: () => void;
   error: string;
+  settings: Settings;
 };
 
-class App extends Component<{}, AppState> {
-  state: AppState = {
-    error: '',
-  };
-
-  async componentDidMount() {
-    try {
-      await this.checkSettingsFile();
-    } catch (error) {
-      this.setState({error: error.message});
-    }
-  }
-
-  checkSettingsFile() {
-    const yupSchema = buildYup(schema, {});
-    return yupSchema.validate(settings);
+class App extends Component<AppProps, {}> {
+  componentDidMount() {
+    this.props.loadSettings();
   }
 
   render() {
-    const {error} = this.state;
+    const {error} = this.props;
     if (!!error) return <div>{error}</div>;
 
     return (
-      <div style={styles.appContainer}>
+      <div style={getStyles(this.props).appContainer}>
         <TodosContainer />
       </div>
     );
   }
 }
 
-const styles = {
+const getStyles = (props: AppProps) => ({
   appContainer: {
-    background: settings.themeColor,
+    background: props.settings.themeColor,
     padding: 30,
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
@@ -50,6 +40,18 @@ const styles = {
     alignItems: 'center',
     height: '100vh',
   },
-};
+});
 
-export default App;
+const mapStateToProps = (state: ReduxState) => ({
+  settings: state.settings.settings,
+  error: state.settings.error,
+});
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch<Redux.AnyAction>) => ({
+  loadSettings: () => dispatch(settingsActions.loadSettings()),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);

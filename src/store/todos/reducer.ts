@@ -1,8 +1,8 @@
 import {Map} from 'immutable';
 import {TodoModel} from '../../models/todo';
 import {
-  SET_TODOS,
-  ADD_TODO,
+  ADD_TODO_SUCCEED,
+  LOAD_TODOS_SUCCEED,
   UPDATE_TODO,
   TOGGLE_COMPLETE,
   TodosActionTypes,
@@ -15,10 +15,12 @@ const initialState: TodosState = {
 
 export const todosReducer = (state = initialState, action: TodosActionTypes): TodosState => {
   switch (action.type) {
-    case SET_TODOS:
-      return {...state, todos: action.payload};
-
-    case ADD_TODO:
+    case LOAD_TODOS_SUCCEED:
+      return {
+        ...state,
+        todos: action.payload,
+      };
+    case ADD_TODO_SUCCEED:
       return {...state, todos: state.todos.set(action.payload.id, action.payload)};
     case TOGGLE_COMPLETE:
       return {

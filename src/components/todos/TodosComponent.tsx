@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
-import {Map, Seq} from 'immutable';
+import {Seq} from 'immutable';
 import moment from 'moment';
 import {TodoList} from './TodoList';
 import {TodoForm} from './TodoForm';
 import {TodoFilter} from './TodoFilter';
-import {FilterBy, SortBy, SortOrder} from '../../types';
+import {FilterBy, SortBy, SortOrder, Settings} from '../../types';
 import {TodoModel} from '../../models/todo';
-import settings from '../../settings.json';
 
 type AppProps = {
   todos: Seq.Indexed<TodoModel>;
-  setTodos: (todos: Map<string, TodoModel>) => void;
+  loadTodos: () => void;
   addTodo: (todo: TodoModel) => void;
   toggleComplete: (id: string) => void;
   updateTodo: (id: string, data: {date: moment.Moment}) => void;
@@ -21,6 +20,7 @@ type AppProps = {
   sortOrder: SortOrder;
   filterBy: FilterBy;
   searchText: string;
+  settings: Settings;
 };
 
 const filterButtons = [
@@ -40,18 +40,8 @@ const filterButtons = [
 
 export class TodosComponent extends Component<AppProps, {}> {
   async componentDidMount() {
-    this.loadTodoFromSettings();
+    this.props.loadTodos();
   }
-
-  loadTodoFromSettings = () => {
-    if (settings.todos) {
-      const todos = settings.todos.reduce((acc, item) => {
-        const todo = TodoModel.create({...item, date: moment(item.date, 'YYYY-MM-DD')});
-        return acc.set(todo.id, todo);
-      }, Map<string, TodoModel>());
-      this.props.setTodos(todos);
-    }
-  };
 
   addTodoHandler = (data: Partial<TodoModel>, cb: () => void): void => {
     this.props.addTodo(TodoModel.create(data));
@@ -85,7 +75,7 @@ export class TodosComponent extends Component<AppProps, {}> {
   };
 
   render() {
-    const {sortBy, sortOrder, filterBy, searchText, todos} = this.props;
+    const {sortBy, sortOrder, filterBy, searchText, todos, settings} = this.props;
 
     const visibleFilterButtons = filterButtons.filter((button) => !!settings.filters[button.value]);
 
@@ -108,6 +98,7 @@ export class TodosComponent extends Component<AppProps, {}> {
           sortChangeHandler={this.sortChangeHandler}
           toggleCompleteHandler={this.toggleCompleteHandler}
           updateTodoDateHandler={this.updateTodoDateHandler}
+          settings={settings}
         />
       </>
     );

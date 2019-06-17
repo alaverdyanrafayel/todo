@@ -1,7 +1,6 @@
 import {connect} from 'react-redux';
 import * as Redux from 'redux';
 import moment from 'moment';
-import {Map} from 'immutable';
 import * as todoActions from '../../store/todos/actions';
 import * as sortingActions from '../../store/sorting/actions';
 import * as filterActions from '../../store/filter/actions';
@@ -17,10 +16,11 @@ const mapStateToProps = (state: ReduxState) => ({
   sortOrder: state.sorting.sortOrder,
   filterBy: state.filter.filterBy,
   searchText: state.filter.searchText,
+  settings: state.settings.settings,
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Redux.AnyAction>) => ({
-  setTodos: (todos: Map<string, TodoModel>) => dispatch(todoActions.setTodos(todos)),
+  loadTodos: () => dispatch(todoActions.loadTodos()),
   addTodo: (todo: TodoModel) => dispatch(todoActions.addTodo(todo)),
   updateTodo: (id: string, data: {date: moment.Moment}) =>
     dispatch(todoActions.updateTodo(id, data)),
